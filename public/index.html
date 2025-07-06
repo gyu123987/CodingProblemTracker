@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Problem Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Problems Solved: <span id="count"></span></h1>
+  <div class="top-bar">
+    <div class="autocomplete" style="width:100%;">
+      <input type="text" id="search" class="search-input" placeholder="Search by name or tag or language...">
+    </div>
+    <button id="openModalBtn" class="add-button">+ Add Problem</button>
+  </div>
+
+  <table id="problemTable">
+    <thead>
+      <tr><th>Date</th><th>Name</th><th>Tags</th><th>Language</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Modal -->
+  <div id="problemModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Add New Problem</h2>
+      <form id="addProblemForm" autocomplete="off">
+        <input type="text" name="name" placeholder="Problem Name" required><br>
+        <input type="url" name="link" placeholder="Problem Link" required><br>
+
+        <div class="autocomplete" style="width:100%;">
+          <input type="text" name="language" id="formLanguageInput" placeholder="Language" required><br>
+        </div>
+        <div class="autocomplete" style="width:100%;">
+          <input type="text" name="tags" id="formTagInput" placeholder="Comma-separated Tags" required>
+        </div>
+        <input type="date" name="date" id="dateField" required><br>
+        <textarea name="code" placeholder="Solution Code" style="resize: none;" rows="5" required></textarea><br>
+        <textarea name="notes" placeholder="Personal Notes" style="resize: none;"></textarea><br>
+        <button type="submit" class="add-button">+ Add Problem</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

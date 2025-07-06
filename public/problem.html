@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Problem Detail</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="index.html" class="back-arrow">← Back to Home</a>
+  <div id="problemDetail"></div>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    fetch(`/api/problems/${id}`)
+      .then(res => res.json())
+      .then(problem => {
+        document.getElementById('problemDetail').innerHTML = `
+          <h1><a href="${problem.link}" target="_blank">${problem.name}</a></h1>
+          <p><strong>Tags:</strong> ${problem.tags.join(', ')}</p>
+          <p><strong>Language:</strong> ${problem.language}</p>
+          <h3>Code:</h3>
+          <pre>${problem.code}</pre>
+          <h3>Notes:</h3>
+          <p>${problem.notes}</p>
+        `;
+      });
+  </script>
+</body>
+</html>
