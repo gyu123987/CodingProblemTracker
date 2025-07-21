@@ -1,52 +1,127 @@
 fetch('/api/problems')
   .then(res => res.json())
-  .then(data => {
-    document.getElementById('count').textContent = data.length;
+  .then(rawData => {
+    document.getElementById('count').textContent = rawData.length;
     const tbody = document.querySelector('#problemTable tbody');
 
-    function renderTable(filteredData) {
+    let currentSort = { key: 'date', ascending: false };
+    let currentQuery = '';
+
+    function sortData(data, key, ascending) {
+      return data.slice().sort((a, b) => {
+        const aVal = a[key]?.toLowerCase?.() || a[key];
+        const bVal = b[key]?.toLowerCase?.() || b[key];
+
+        if (aVal < bVal) return ascending ? -1 : 1;
+        if (aVal > bVal) return ascending ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function filterData(data, query) {
+      const q = query.toLowerCase();
+      return data.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.language.toLowerCase().includes(q) ||
+        p.tags.some(t => t.toLowerCase().includes(q))
+      );
+    }
+
+    function updateTable() {
+      const filtered = filterData(rawData, currentQuery);
+      const sorted = sortData(filtered, currentSort.key, currentSort.ascending);
+      renderTable(sorted);
+      updateSortIndicators();
+    }
+
+    const colorMap = {};
+
+    function getColor(str) {
+      if (colorMap[str]) return colorMap[str];
+
+      // Deterministic hue
+      const hash = Array.from(str).reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      const hue = (hash * 137) % 360;
+      const saturation = 60;
+      const lightness = 50;
+
+      colorMap[str] = { h: hue, s: saturation, l: lightness };
+      return colorMap[str];
+    }
+
+    function getTextColor({ h, s, l }) {
+      // Estimate brightness
+      const brightness = (1 - s / 100) * l + s / 100 * (l < 50 ? l * 2 : 100 - l);
+      return brightness < 60 ? '#fff' : '#000';
+    }
+
+    function makeBubble(str) {
+      const hsl = getColor(str);
+      const bgColor = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+      const textColor = getTextColor(hsl);
+      return `<span class="bubble" style="background-color:${bgColor};color:${textColor}">${str}</span>`;
+    }
+
+    function renderTable(data) {
       tbody.innerHTML = '';
-      filteredData.forEach(p => {
+      data.forEach(p => {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${p.date || ''}</td>
           <td><a href="problem.html?id=${p.id}">${p.name}</a></td>
-          <td>${p.tags.join(', ')}</td>
-          <td>${p.language}</td>
+          <td>${p.tags.map(t => makeBubble(t)).join(' ')}</td>
+          <td>${makeBubble(p.language)}</td>
         `;
         tbody.appendChild(row);
       });
     }
 
-    renderTable(data);
+    function updateSortIndicators() {
+      document.querySelectorAll('th[data-sort]').forEach(th => {
+        const key = th.getAttribute('data-sort');
+        let symbol = '⬍';
+        if (key === currentSort.key) {
+          symbol = currentSort.ascending ? '↑' : '↓';
+        }
+        th.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ' ' + symbol;
+      });
+    }
+
+    // Initial render
+    updateTable();
 
     document.getElementById('search').addEventListener('input', e => {
-      const q = e.target.value.toLowerCase();
-      const filtered = data.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.language.toLowerCase().includes(q) ||
-        p.tags.some(t => t.toLowerCase().includes(q))
-      );
-      renderTable(filtered);
+      currentQuery = e.target.value;
+      updateTable();
     });
 
-    // let existingTags = new Array();
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', () => {
+        const key = th.getAttribute('data-sort');
+        if (currentSort.key === key) {
+          currentSort.ascending = !currentSort.ascending;
+        } else {
+          currentSort.key = key;
+          currentSort.ascending = true;
+        }
+        updateTable();
+      });
+    });
+
+    // Autocomplete setup (unchanged)
     let setExistingTags = new Set();
-    data.forEach(p => p.tags.forEach(t => setExistingTags.add(t)));
+    rawData.forEach(p => p.tags.forEach(t => setExistingTags.add(t)));
     setExistingTags = Array.from(setExistingTags);
-    // existingTags = [...setExistingTags]
 
-
-    // let existingLanguage = new Array();
     let setExistingLanguage = new Set();
-    data.forEach(p => setExistingLanguage.add(p.language));
+    rawData.forEach(p => setExistingLanguage.add(p.language));
     setExistingLanguage = Array.from(setExistingLanguage);
-    // existingTags = [...setExistingTags]
 
     let setExistingSearch = new Set()
-    data.forEach(p => setExistingSearch.add(p.language));
-    data.forEach(p => p.tags.forEach(t => setExistingSearch.add(t)));
-    data.forEach(p => setExistingSearch.add(p.name));
+    rawData.forEach(p => setExistingSearch.add(p.language));
+    rawData.forEach(p => p.tags.forEach(t => setExistingSearch.add(t)));
+    rawData.forEach(p => setExistingSearch.add(p.name));
     setExistingSearch = Array.from(setExistingSearch);
 
     autocomplete(document.getElementById("formTagInput"), setExistingTags);

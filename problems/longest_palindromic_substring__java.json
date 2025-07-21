@@ -1,0 +1,13 @@
+{
+  "name": "Longest Palindromic Substring",
+  "link": "https://leetcode.com/problems/longest-palindromic-substring/description/",
+  "language": "Java",
+  "tags": [
+    "Two Pointers",
+    "String",
+    "Dynamic Programming"
+  ],
+  "code": "class Solution {\n    public String longestPalindrome(String s) {\n        boolean[][] dp = new boolean[s.length()][s.length()];\n        int maxLen = 0;\n        String maxString = \"\";\n\n        for (int i = 0; i < s.length(); i++) {\n            for (int j = 0; j < s.length() - i; j++) {\n                if (i == 0 || s.charAt(j) == s.charAt(j + i) && ((j+i-1 < j+1) || dp[j+1][j+i-1])) {\n                    dp[j][j+i] = true;\n                    if (i+1 > maxLen) {\n                        maxLen = i+1;\n                        maxString = s.substring(j, j+i+1);\n                    }\n                }\n                else\n                    dp[j][j+i] = false;\n            }\n        }\n\n        return maxString;\n    }\n}",
+  "notes": "Solution uses DP where each value in the dp array i, j represents if substring [i, j+1] is a palindrome. Can use previously calculated values to check if the two outer characters are equal and use dp array for inner. i == 0 for first loop for 1 character, and (j+i-1 < j+1) for second loop where the middle has nothing. A better solution (not implemented) could be starting from the center where you can easily eliminate non-working palindromes without checking/building the entire O(n^2) space. Practically much faster due to most long strings not needing to be checked as long palindromes are rare. There exists an O(n) solution called Manacher's Algorithm, but is considered out of scope.",
+  "date": "2025-07-20"
+}

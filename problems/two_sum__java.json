@@ -1,0 +1,12 @@
+{
+  "name": "Two Sum",
+  "link": "https://leetcode.com/problems/",
+  "language": "Java",
+  "tags": [
+    "Array",
+    "Hash Table"
+  ],
+  "code": "import java.util.Hashtable;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Hashtable<Integer, Integer> table = new Hashtable<>();\n        for (int i = 0; i < nums.length; i++) {\n            if (table.containsKey(target - nums[i])) {\n                int[] vals = {table.get(target - nums[i]), i};\n                return vals;\n            }\n            table.put(nums[i], i);\n        }\n        System.out.print(table);\n        return null;\n    }\n}",
+  "notes": "Uses a Hash Table to quickly look up whether the complement exists in one pass.",
+  "date": "2025-07-05"
+}

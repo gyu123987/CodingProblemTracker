@@ -171,3 +171,14 @@ form button {
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
+
+.bubble {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  margin: 0.15em;
+  font-size: 0.9em;
+  border-radius: 999px;
+  white-space: nowrap;
+  vertical-align: middle;
+  font-weight: bold;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Add Two Numbers",
+  "link": "https://leetcode.com/problems/add-two-numbers/",
+  "language": "Java",
+  "tags": [
+    "Linked List",
+    "Math",
+    "Recursion"
+  ],
+  "code": "/**\n * Definition for singly-linked list.\n * public class ListNode {\n *     int val;\n *     ListNode next;\n *     ListNode() {}\n *     ListNode(int val) { this.val = val; }\n *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n * }\n */\nclass Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode ans = new ListNode();\n        ans.next = new ListNode();\n        ListNode tracker = ans;\n        int sum = 0;\n        while (l1 != null && l2 != null) {\n            tracker = tracker.next;\n            tracker.val = (l1.val + l2.val + sum) % 10;\n            sum = (l1.val + l2.val + sum) / 10;\n            tracker.next = new ListNode();\n            l1 = l1.next;\n            l2 = l2.next;\n        }\n        while (l1 != null) {\n            tracker = tracker.next;\n            tracker.val = (l1.val + sum) % 10;\n            sum = (l1.val + sum) / 10;\n            tracker.next = new ListNode();\n            l1 = l1.next;\n        }\n        while (l2 != null) {\n            tracker = tracker.next;\n            tracker.val = (l2.val + sum) % 10;\n            sum = (l2.val + sum) / 10;\n            tracker.next = new ListNode();\n            l2 = l2.next;\n        }\n        if (sum == 1)\n            tracker.next = new ListNode(sum);\n        else\n            tracker.next = null;\n        return ans.next;\n    }\n}",
+  "notes": "Can do it much more cleaner in just 1 loop by setting value to 0 if l1/l2 is null and moving to next only if not null, and checking or condition on l1/l2/carry",
+  "date": "2025-07-06"
+}

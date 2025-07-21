@@ -1,0 +1,13 @@
+{
+  "name": "Longest Substring Without Repeating Characters",
+  "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+  "language": "Java",
+  "tags": [
+    "Hash Table",
+    "String",
+    "Sliding Window"
+  ],
+  "code": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        HashMap<Character, Integer> map = new HashMap<>();\n        int maxLength = 0;\n        int left = 0;\n        for (int right = 0; right < s.length(); right++) {\n            if (map.containsKey(s.charAt(right))) {\n                if (map.get(s.charAt(right)) >= left) {\n                    left = map.get(s.charAt(right)) + 1;\n                }\n            }\n            map.put(s.charAt(right), right);\n            if (right - left + 1 > maxLength)\n                maxLength = right - left + 1;\n        }\n        return maxLength;\n    }\n}",
+  "notes": "Sliding window problem that needs to move left if a character repeats O(n). Use hash table with index to optimize and skip the left side to the repeated index",
+  "date": "2025-07-06"
+}
